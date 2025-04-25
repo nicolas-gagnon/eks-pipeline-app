@@ -4,10 +4,15 @@ phases:
     commands:
       - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
       - export PATH=$PATH:./bin
+
   build:
     commands:
       - 'IMAGE_URI=$(cat imageDetail.json | jq -r .imageUri)'
       - 'echo "Scanning image: $IMAGE_URI"'
       - 'trivy image --exit-code 1 --severity CRITICAL,HIGH $IMAGE_URI || exit 1'
+      - 'echo "Scan complete" > scan-status.txt'
+
 artifacts:
-  files: []
+  files:
+    - scan-status.txt
+    - imageDetail.json
