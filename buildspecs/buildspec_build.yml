@@ -3,7 +3,7 @@ phases:
   install:
     commands:
       - echo "Installing tools"
-      - apt-get update && apt-get install -y jq tar sha256sum
+      - apt-get update && apt-get install -y jq tar 
 
   pre_build:
     commands:
