@@ -3,11 +3,14 @@ phases:
   pre_build:
     commands:
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
       - REPO_URI=247084108338.dkr.ecr.us-east-1.amazonaws.com/my-app
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPO_URI
   build:
     commands:
       - docker build -t $REPO_URI:$IMAGE_TAG .
       - docker push $REPO_URI:$IMAGE_TAG
+      - echo "{\"imageUri\": \"$REPO_URI:$IMAGE_TAG\"}" > imageDetail.json
 artifacts:
-  files: []
+  files:
+    - imageDetail.json
