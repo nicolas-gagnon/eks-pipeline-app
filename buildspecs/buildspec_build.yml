@@ -9,7 +9,7 @@ phases:
     commands:
       - echo "Setting variables"
       - IMAGE_TAG=$(tar -cf - . | sha256sum | cut -c1-12)
-      - echo "Image tag: $IMAGE_TAG"
+      - 'echo "Image tag: $IMAGE_TAG"'
       - echo $IMAGE_TAG > image_tag.txt
       - AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
       - REPO_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/my-app
@@ -18,13 +18,13 @@ phases:
   build:
     commands:
       - echo "Checking if image already exists in ECR"
-      - |
+      - >
         if aws ecr describe-images --repository-name my-app --image-ids imageTag=$IMAGE_TAG > /dev/null 2>&1; then
-          echo "Image $IMAGE_TAG already exists. Skipping build & push."
+          echo "Image $IMAGE_TAG already exists. Skipping build & push.";
         else
-          echo "Image does not exist. Building and pushing."
-          docker build -t $REPO_URI:$IMAGE_TAG .
-          docker push $REPO_URI:$IMAGE_TAG
+          echo "Image does not exist. Building and pushing.";
+          docker build -t $REPO_URI:$IMAGE_TAG .;
+          docker push $REPO_URI:$IMAGE_TAG;
         fi
       - echo "{\"imageUri\": \"$REPO_URI:$IMAGE_TAG\"}" > imageDetail.json
 
