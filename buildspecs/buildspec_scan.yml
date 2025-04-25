@@ -16,3 +16,4 @@ artifacts:
   files:
     - scan-status.txt
     - imageDetail.json
+    - buildspecs/buildspec_deploy.yml
