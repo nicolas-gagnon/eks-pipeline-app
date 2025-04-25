@@ -14,6 +14,7 @@ phases:
 
 artifacts:
   files:
-    - scan-status.txt
     - imageDetail.json
+    - buildspecs/buildspec_scan.yml
     - buildspecs/buildspec_deploy.yml
+    - image_tag.txt
