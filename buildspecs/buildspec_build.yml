@@ -32,4 +32,5 @@ artifacts:
   files:
     - imageDetail.json
     - buildspecs/buildspec_scan.yml
+    - buildspecs/buildspec_deploy.yml    
     - image_tag.txt
