@@ -14,7 +14,8 @@ phases:
       - docker build -t $REPO_URI:$IMAGE_TAG .
       - echo "Pushing Docker image"
       - docker push $REPO_URI:$IMAGE_TAG
-      - echo "{\"imageUri\": \"$REPO_URI:$IMAGE_TAG\"}" > imageDetail.json
+      - |
+        echo "{\"imageUri\": \"$REPO_URI:$IMAGE_TAG\"}" > imageDetail.json
 
 artifacts:
   files:
