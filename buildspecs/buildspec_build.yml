@@ -1,23 +1,35 @@
 version: 0.2
 phases:
+  install:
+    commands:
+      - echo "Installing tools"
+      - apt-get update && apt-get install -y jq tar sha256sum
+
   pre_build:
     commands:
       - echo "Setting variables"
-      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=$(tar -cf - . | sha256sum | cut -c1-12)
+      - echo "Image tag: $IMAGE_TAG"
+      - echo $IMAGE_TAG > image_tag.txt
       - AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
       - REPO_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/my-app
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPO_URI
 
   build:
     commands:
-      - echo "Building Docker image"
-      - docker build -t $REPO_URI:$IMAGE_TAG .
-      - echo "Pushing Docker image"
-      - docker push $REPO_URI:$IMAGE_TAG
+      - echo "Checking if image already exists in ECR"
       - |
-        echo "{\"imageUri\": \"$REPO_URI:$IMAGE_TAG\"}" > imageDetail.json
+        if aws ecr describe-images --repository-name my-app --image-ids imageTag=$IMAGE_TAG > /dev/null 2>&1; then
+          echo "Image $IMAGE_TAG already exists. Skipping build & push."
+        else
+          echo "Image does not exist. Building and pushing."
+          docker build -t $REPO_URI:$IMAGE_TAG .
+          docker push $REPO_URI:$IMAGE_TAG
+        fi
+      - echo "{\"imageUri\": \"$REPO_URI:$IMAGE_TAG\"}" > imageDetail.json
 
 artifacts:
   files:
     - imageDetail.json
     - buildspecs/buildspec_scan.yml
+    - image_tag.txt

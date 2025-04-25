@@ -6,8 +6,8 @@ phases:
       - export PATH=$PATH:./bin
   build:
     commands:
-      - IMAGE_URI=$(cat imageDetail.json | jq -r .imageUri)
-      - echo "Scanning image: $IMAGE_URI"
-      - trivy image --exit-code 1 --severity CRITICAL,HIGH $IMAGE_URI || exit 1
+      - 'IMAGE_URI=$(cat imageDetail.json | jq -r .imageUri)'
+      - 'echo "Scanning image: $IMAGE_URI"'
+      - 'trivy image --exit-code 1 --severity CRITICAL,HIGH $IMAGE_URI || exit 1'
 artifacts:
   files: []
