@@ -5,8 +5,7 @@ phases:
       - curl -sSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
   build:
     commands:
-      - echo "Verifying helm directory contents"
-      - ls -R ./helm
+      - echo "Verifying helm directory contents"      
       - IMAGE_TAG=$(cat image_tag.txt)
       - AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
       - REPO_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/my-app
