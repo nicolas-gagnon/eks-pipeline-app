@@ -7,13 +7,17 @@ phases:
 
   pre_build:
     commands:
+        pre_build:
+    commands:
       - echo "Setting variables"
       - IMAGE_TAG=$(tar -cf - . | sha256sum | cut -c1-12)
       - 'echo "Image tag: $IMAGE_TAG"'
       - echo $IMAGE_TAG > image_tag.txt
       - AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+      - AWS_REGION=$(aws configure get region)          # <<< ADD THIS
       - REPO_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/my-app
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPO_URI
+
 
   build:
     commands:
